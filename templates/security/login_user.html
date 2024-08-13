@@ -1,0 +1,93 @@
+{% extends "security/base.html" %} {% from "security/_macros.html" import
+render_field_with_errors, render_field, render_field_errors, render_form_errors,
+prop_next %} {% block content %} {% include "security/_messages.html" %}
+<div class="card mt-5 p-3 w-50 m-auto">
+  <h1 class="text-center p-3">{{ _fsdomain('Login') }}</h1>
+  <form
+    action="{{ url_for_security('login') }}{{ prop_next() }}"
+    method="post"
+    name="login_user_form"
+  >
+    {{ login_user_form.hidden_tag() }}
+    <div class="form-floating">
+      {{ render_form_errors(login_user_form) }} {% if "email" in
+      identity_attributes %}{{ render_field_with_errors(login_user_form.email,
+      class='form-control') }}{% endif %}
+    </div>
+    {% if login_user_form.username and "username" in identity_attributes %} {%
+    if "email" in identity_attributes %}
+    <h3>{{ _fsdomain("or") }}</h3>
+    {% endif %} {{ render_field_with_errors(login_user_form.username) }} {%
+    endif %}
+
+    <div class="fs-gap form-floating">
+      {{ render_field_with_errors(login_user_form.password,
+      class='form-control') }}
+    </div>
+    <div class="d-flex justify-content-between">
+      <div class="form-check">
+        {{ render_field_with_errors(login_user_form.remember,
+        class='form-check-input') }}
+      </div>
+      {% if security.recoverable %}
+      <div>
+        <a href="{{ url_for_security('forgot_password') }}"
+          >{{ _fsdomain('Forgot password') }}</a
+        >
+      </div>
+      {% endif %}
+    </div>
+    <div>
+      {{ render_field_errors(login_user_form.csrf_token) }} {{
+      render_field(login_user_form.submit, class='btn btn-primary w-100') }}
+    </div>
+    <p class="fs-center mt-2">
+      Don't have an account?
+      <a
+        href="{{ url_for_security('register') }}{%- if 'next' in request.args -%}?next={{ request.args.next|urlencode }}{%- endif -%}"
+        >{{ _fsdomain('Register') }}</a
+      >
+    </p>
+    <a href="{{ url_for_security('send_confirmation') }}"
+      >{{ _fsdomain('Confirm account') }}</a
+    >
+  </form>
+</div>
+{% if security.webauthn %}
+<hr class="fs-gap" />
+<h2>{{ _fsdomain("Use WebAuthn to Sign In") }}</h2>
+<div>
+  <form method="get" id="wan_signin_form" name="wan_signin_form">
+    <input
+      id="wan_signin"
+      name="wan_signin"
+      type="submit"
+      value="{{ _fsdomain('Sign in with WebAuthn') }}"
+      formaction="{{ url_for_security('wan_signin') }}{{ prop_next() }}"
+    />
+  </form>
+</div>
+{% endif %} {% if security.oauthglue %}
+<hr class="fs-gap" />
+<h2>{{ _fsdomain("Use Social Oauth to Sign In") }}</h2>
+{% for provider in security.oauthglue.provider_names %}
+<div class="fs-gap">
+  <form method="post" id="{{ provider }}_form" name="{{ provider }}_form">
+    <input
+      id="{{ provider }}"
+      name="{{ provider }}"
+      type="submit"
+      value="{{ _fsdomain('Sign in with ')~provider }}"
+      formaction="{{ url_for_security('oauthstart', name=provider) }}{{ prop_next() }}"
+    />
+    {% if csrf_token is defined %}
+    <input
+      id="{{ provider }}_csrf_token"
+      name="{{ provider }}_csrf_token"
+      type="hidden"
+      value="{{ csrf_token() }}"
+    />
+    {% endif %}
+  </form>
+</div>
+{% endfor %} {% endif %} {% endblock content %}
