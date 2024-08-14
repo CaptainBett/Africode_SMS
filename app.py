@@ -42,8 +42,9 @@ class WebAuth(db.Model):
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    teacher = db.relationship('User' , backref='course_taught')
     teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    teacher = db.relationship('User' , backref='course_taught')
+    
 
 class Enrollment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -65,7 +66,18 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('Email is already registered.')
-        
+
+@app.before_request
+def restrict_authenticated_user():
+    # List of endpoints to restrict
+    restricted_endpoints = ['security.login', 'security.register']
+
+    # Check if the user is authenticated and trying to access a restricted endpoint
+    if current_user.is_authenticated and request.endpoint in restricted_endpoints:
+        flash('You are already logged in.', 'info')
+        return redirect(url_for('index'))  # Redirect to your desired page (e.g., index)
+
+
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
