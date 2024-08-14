@@ -1,0 +1,27 @@
+{% extends "base.html" %} {% block content %}
+<h2 class="text-center">Register User</h2>
+<form method="POST" action="{{ url_for('register_user') }}">
+  {{ form.hidden_tag() }}
+
+  <div class="form-group">
+    {{ form.email.label(class="form-label") }} {{
+    form.email(class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ form.password.label(class="form-label") }} {{
+    form.password(class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ form.confirm_password.label(class="form-label") }} {{
+    form.confirm_password(class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ form.role.label(class="form-label") }} {{ form.role(class="form-select")
+    }}
+  </div>
+  <div class="form-group mt-2 d-flex">
+    {{ form.submit(class="btn btn-primary justify-content-center") }}
+  </div>
+</form>
+
+{{ course }} {% endblock %}
