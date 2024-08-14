@@ -1,11 +1,13 @@
 {% extends "base.html" %} {% block content %}
 <h1>Courses</h1>
+
 <ul>
   {% for course in courses %}
   <li>
     <a href="{{ url_for('course_details', course_id=course.id) }}"
       >{{ course.name }}</a
     >
+
     {% if current_user.has_role('Student') %} {% if course not in
     current_user.enrollments %}
     <a
@@ -16,6 +18,7 @@
     {% endif %} {% endif %}
   </li>
   {% endfor %}
+  <a href="{{ url_for('index') }}" class="">Dashboard</a>
 </ul>
 {% if current_user.has_role('Admin') %}
 <a href="{{ url_for('create_course') }}" class="btn btn-success"

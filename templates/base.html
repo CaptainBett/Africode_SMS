@@ -1,18 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {% block head %}
+    <!-- Required meta tags -->
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
     />
-    {{ bootstrap.load_css() }}
-    <title>{% block title %} SMS{% endblock %}</title>
-    {% endblock %}
+
+    <!-- Custom CSS -->
+    <style>
+      /* Ensure the entire viewport height is utilized and center content both vertically and horizontally */
+      .vh-100 {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+          135deg,
+          #f5f7fa,
+          #fcfdfd
+        ); /* Soft gradient background */
+      }
+
+      /* Enhanced card styling for a more modern look */
+      .card {
+        padding: 10px; /* Increased padding for better spacing */
+        border-radius: 12px; /* Slightly larger border radius for softer corners */
+        box-shadow: 0 8px 16px rgba(38, 1, 253, 0.2); /* Deeper shadow for depth */
+        background-color: #009e969c; /* Ensure the card has a white background */
+        transition: transform 0.2s, box-shadow 0.2s; /* Transition effects for hover state */
+      }
+
+      /* Add a hover effect for the card */
+      .card:hover {
+        transform: translateY(-4px); /* Slight elevation on hover */
+        box-shadow: 0 12px 24px rgba(243, 2, 14, 0.3); /* Enhanced shadow on hover */
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .card {
+          padding: 15px; /* Adjust padding for smaller screens */
+        }
+      }
+    </style>
+
+    <title>{% block title %}{% endblock %}</title>
   </head>
   <body>
-    {% block content %}{% endblock %} {% block scripts %} {{ bootstrap.load_js()
-    }} {% endblock %}
+    <div class="vh-100">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card">{% block content %} {% endblock %}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"></script>
+-->
   </body>
 </html>
