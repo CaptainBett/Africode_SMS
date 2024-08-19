@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block content %}
+<h1>View Users</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>{{ user.email }}</td>
+      <td>
+        {% if user.roles|length > 0 %} {{ user.roles[0].name }} {% else %} No
+        role assigned {% endif %}
+      </td>
+      <td>
+        <!-- Edit button -->
+        <a
+          href="{{ url_for('edit_user', user_id=user.id) }}"
+          class="btn btn-warning"
+          >Edit</a
+        >
+
+        <!-- Delete button within a form to trigger POST request -->
+        <form
+          action="{{ url_for('delete_user', user_id=user.id) }}"
+          method="POST"
+          style="display: inline"
+        >
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

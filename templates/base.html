@@ -13,12 +13,11 @@
 
     <!-- Custom CSS -->
     <style>
-      /* Ensure the entire viewport height is utilized and center content both vertically and horizontally */
+      /* Ensure the entire viewport height is utilized */
       .vh-100 {
         min-height: 100vh;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: row; /* Changed to row to support sidebar */
         background: linear-gradient(
           135deg,
           #f5f7fa,
@@ -26,13 +25,14 @@
         ); /* Soft gradient background */
       }
 
-      /* Enhanced card styling for a more modern look */
+      /* Enhanced card styling */
       .card {
         padding: 10px; /* Increased padding for better spacing */
         border-radius: 12px; /* Slightly larger border radius for softer corners */
         box-shadow: 0 8px 16px rgba(38, 1, 253, 0.2); /* Deeper shadow for depth */
-        background-color: #009e969c; /* Ensure the card has a white background */
+        background-color: #009e969c; /* Card background color */
         transition: transform 0.2s, box-shadow 0.2s; /* Transition effects for hover state */
+        width: 100%; /* Full width of the container */
       }
 
       /* Add a hover effect for the card */
@@ -47,30 +47,116 @@
           padding: 15px; /* Adjust padding for smaller screens */
         }
       }
-    </style>
 
-    <title>{% block title %}{% endblock %}</title>
+      /* Sidebar styling */
+      #sidebarMenu {
+        min-width: 250px; /* Set the width of the sidebar */
+        max-width: 250px;
+        background-color: #f8f9fa; /* Light background for the sidebar */
+        padding: 20px;
+        border-right: 1px solid #dee2e6; /* Border for separation */
+      }
+
+      /* Sidebar nav links */
+      .nav-link {
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      /* Main content styling */
+      .main-content {
+        flex-grow: 1; /* Ensure it grows to occupy remaining space */
+        padding: 20px;
+      }
+    </style>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>SMS</title>
+    {% endif %}
   </head>
   <body>
     <div class="vh-100">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-6">
-            <div class="card">{% block content %} {% endblock %}</div>
+      <!-- Sidebar -->
+      <nav id="sidebarMenu" class="d-lg-block bg-light sidebar">
+        <div class="position-sticky">
+          <ul class="nav flex-column">
+            <!-- Added links specific to Admin role -->
+            {% if current_user.has_role('Admin') %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('index') }}">My Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('manage_courses') }}"
+                >Manage Courses</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('register_user') }}"
+                >Add Users</a
+              >
+            </li>
+            {% endif %}
+            <!-- Added links specific to Teacher role -->
+            {% if current_user.has_role('Teacher') %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('index') }}">My Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('courses') }}">My Courses</a>
+            </li>
+            {% endif %}
+            <!-- Added links specific to Student role -->
+            {% if current_user.has_role('Student') %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('index') }}">My Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('courses') }}">My Courses</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('security.logout') }}"
+                >Logout</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-10">
+              <div class="card">
+                {% block content %} {% with messages =
+                get_flashed_messages(with_categories=true) %} {% if messages %}
+                <div class="container mt-3">
+                  {% for category, message in messages %}
+                  <div
+                    class="alert alert-{{ category }} alert-dismissible fade show d-flex justify-content-between"
+                    role="alert"
+                  >
+                    {{ message }}
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="alert"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %} {% endwith %} {% endblock %}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Optional JavaScript; choose one of the two! -->
-
-    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <!-- Optional JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Option 2: Separate Popper and Bootstrap JS -->
-    <!--
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"></script>
--->
   </body>
 </html>

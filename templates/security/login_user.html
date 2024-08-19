@@ -1,7 +1,27 @@
 {% extends "security/base.html" %} {% from "security/_macros.html" import
 render_field_with_errors, render_field, render_field_errors, render_form_errors,
-prop_next %} {% block content %}
-<div>{% include "security/_messages.html" %}</div>
+prop_next %} {% block content %} {% with messages =
+get_flashed_messages(with_categories=true) %} {% if messages %}
+<div
+  class="container mt-3 bg-info d-flex justify-content-center align-items-center w-40"
+>
+  {% for category, message in messages %}
+  <div
+    class="alert alert-{{ category }} alert-dismissible fade show d-flex justify-content-between"
+    role="alert"
+  >
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %} {% endwith %}
+<!-- {% include "security/_messages.html" %} -->
 <div class="d-flex justify-content-center align-items-center min-vh-100">
   <div class="card p-4 w-100" style="max-width: 400px">
     <h1 class="text-center mb-4">{{ _fsdomain('Login') }}</h1>
