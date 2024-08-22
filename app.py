@@ -68,6 +68,7 @@ class Enrollment(db.Model):
     
     # `backref` automatically handles the reverse relationships for `student` and `course`
     grade = db.Column(db.Float, nullable=True)
+    remark = db.Column(db.String(255), nullable=True) 
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])

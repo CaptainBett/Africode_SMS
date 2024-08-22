@@ -1,31 +1,27 @@
-{% extends "base.html" %} 
-{% block content %} 
-
-{% with messages = get_flashed_messages(with_categories=true) %} 
-  {% if messages %}
-  <div class="container mt-3">
-    {% for category, message in messages %}
-    <div
-      class="alert alert-{{ category }} alert-dismissible fade show d-flex justify-content-between"
-      role="alert"
-    >
-      {{ message }}
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-      ></button>
-    </div>
-    {% endfor %}
+{% extends "base.html" %} {% block content %} {% with messages =
+get_flashed_messages(with_categories=true) %} {% if messages %}
+<div class="container mt-3">
+  {% for category, message in messages %}
+  <div
+    class="alert alert-{{ category }} alert-dismissible fade show d-flex justify-content-between"
+    role="alert"
+  >
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
   </div>
-  {% endif %} 
-{% endwith %}
+  {% endfor %}
+</div>
+{% endif %} {% endwith %}
 
-<!-- Updated content for Admin, Teacher, and Student roles -->
+<!-- Admin View -->
 {% if role == 'Admin' %}
 <h1 class="text-center">{{ course.name }}</h1>
-<h3>Teacher: {{ teacher.email }}</h2>
+<h3>Teacher: {{ teacher.email }}</h3>
 
 {% if enrollments|length > 0 %}
 <table class="table table-striped">
@@ -34,6 +30,7 @@
       <th>Student Name</th>
       <th>Grade</th>
       <th>Remark</th>
+      <!-- Remark column added -->
     </tr>
   </thead>
   <tbody>
@@ -42,6 +39,7 @@
       <td>{{ enrollment.student.email }}</td>
       <td>{{ enrollment.grade }}</td>
       <td>{{ enrollment.remark }}</td>
+      <!-- Display remark -->
     </tr>
     {% endfor %}
   </tbody>
@@ -49,10 +47,14 @@
 {% else %}
 <div class="alert alert-info text-center" role="alert">
   <h4 class="alert-heading">No Students Enrolled</h4>
-  <p>It looks like there are no students enrolled in this course yet. Once students are enrolled, their information will appear here.</p>
+  <p>
+    It looks like there are no students enrolled in this course yet. Once
+    students are enrolled, their information will appear here.
+  </p>
 </div>
 {% endif %}
 
+<!-- Teacher View -->
 {% elif role == 'Teacher' %}
 <h1>{{ course.name }}</h1>
 
@@ -62,6 +64,9 @@
     <tr>
       <th>Student Name</th>
       <th>Grade</th>
+      <th>Remark</th>
+      <!-- Remark column added -->
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -69,6 +74,39 @@
     <tr>
       <td>{{ enrollment.student.email }}</td>
       <td>{{ enrollment.grade }}</td>
+      <td>{{ enrollment.remark }}</td>
+      <!-- Display current remark -->
+      <td>
+        <!-- Form to submit grade and remark -->
+        <form
+          action="{{ url_for('manage_students') }}"
+          method="POST"
+          class="d-inline"
+        >
+          <input
+            type="hidden"
+            name="enrollment_id"
+            value="{{ enrollment.id }}"
+          />
+          <div class="input-group">
+            <input
+              type="text"
+              name="grade"
+              class="form-control"
+              placeholder="Grade"
+              value="{{ enrollment.grade }}"
+            />
+            <input
+              type="text"
+              name="remark"
+              class="form-control"
+              placeholder="Remark"
+              value="{{ enrollment.remark }}"
+            />
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </td>
     </tr>
     {% endfor %}
   </tbody>
@@ -76,10 +114,14 @@
 {% else %}
 <div class="alert alert-info text-center" role="alert">
   <h4 class="alert-heading">No Students Enrolled</h4>
-  <p>You currently have no students enrolled in this course. Encourage students to sign up to start teaching.</p>
+  <p>
+    You currently have no students enrolled in this course. Encourage students
+    to sign up to start teaching.
+  </p>
 </div>
 {% endif %}
 
+<!-- Student View -->
 {% elif role == 'Student' %}
 <h2>Your Courses</h2>
 
@@ -91,6 +133,7 @@
       <th>Teacher</th>
       <th>Grade</th>
       <th>Remark</th>
+      <!-- Remark column added -->
     </tr>
   </thead>
   <tbody>
@@ -100,6 +143,7 @@
       <td>{{ enrollment.course.teacher.email }}</td>
       <td>{{ enrollment.grade }}</td>
       <td>{{ enrollment.remark }}</td>
+      <!-- Display remark to student -->
     </tr>
     {% endfor %}
   </tbody>
@@ -107,11 +151,12 @@
 {% else %}
 <div class="alert alert-info text-center" role="alert">
   <h4 class="alert-heading">No Courses Found</h4>
-  <p>You are not enrolled in any courses yet. Once you enroll in courses, you'll see them listed here along with your grades and remarks.</p>
+  <p>
+    You are not enrolled in any courses yet. Once you enroll in courses, you'll
+    see them listed here along with your grades and remarks.
+  </p>
 </div>
-{% endif %}
-
-{% endif %}
+{% endif %} {% endif %}
 <a href="{{ url_for('courses')}}" class="btn btn-secondary mt-4">Back</a>
 <!-- End of updated content -->
 
