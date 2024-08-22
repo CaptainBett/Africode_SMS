@@ -37,7 +37,9 @@ qrcode==7.4.2
 six==1.16.0
 SQLAlchemy==2.0.32
 SQLAlchemy-Utils==0.41.2
+style==1.1.0
 typing_extensions==4.12.2
+update==0.0.1
 webauthn==2.2.0
 webencodings==0.5.1
 Werkzeug==3.0.3
