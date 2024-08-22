@@ -294,41 +294,40 @@ def delete_course(course_id):
     flash('Course deleted successfully!', 'success')
     return redirect(url_for('manage_courses'))
 
-              
-@app.route('/register_user',methods=['POST','GET'])
+@app.route('/register_user', methods=['POST', 'GET'])
 @roles_required('Admin')
 def register_user():
     form = RegistrationForm()
+
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
-        role = form.role.data
+        role_name = form.role.data
 
         # Check if the user already exists
         if user_datastore.find_user(email=email):
-            flash('Email is already registered','warning')
+            flash('Email is already registered', 'danger')
             return redirect(url_for('register_user'))
 
-         # Find the role in the database
-        role = user_datastore.find_role(role)
+        # Find the role in the database
+        role = user_datastore.find_role(role_name)
         if role is None:
-            flash(f'Role "{role}" does not exist.', 'danger')
+            flash(f'Role "{role_name}" does not exist.', 'danger')
             return redirect(url_for('register_user'))
         
-      # Hash the password and create the user
+        # Hash the password and create the user
         hashed_password = hash_password(password)
         user = user_datastore.create_user(email=email, password=hashed_password)
         
-        
         # Add role to user
-        user_datastore.add_role_to_user(user,role)
+        user_datastore.add_role_to_user(user, role)
         
         db.session.commit()
-        flash('User registered successfully','success')
+        flash('User registered successfully', 'success')
         return redirect(url_for('index'))
     
-    return render_template('register_user.html', title='Register User | SMS', form=form) 
-    
+    return render_template('register_user.html', title='Register User | SMS', form=form)
+
 @app.route('/view_users')
 @roles_required('Admin')  # Only allow Admins to view users
 def view_users():
