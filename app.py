@@ -72,7 +72,6 @@ class Enrollment(db.Model):
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     role = SelectField('Role', choices=[('Student', 'Student'), ('Teacher', 'Teacher')])
     submit = SubmitField('Register')
 

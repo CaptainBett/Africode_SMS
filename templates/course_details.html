@@ -1,27 +1,33 @@
-{% extends "base.html" %} {% block content %} {% with messages =
-get_flashed_messages(with_categories=true) %} {% if messages %}
-<div class="container mt-3">
-  {% for category, message in messages %}
-  <div
-    class="alert alert-{{ category }} alert-dismissible fade show d-flex justify-content-between"
-    role="alert"
-  >
-    {{ message }}
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="alert"
-      aria-label="Close"
-    ></button>
+{% extends "base.html" %} 
+{% block content %} 
+
+{% with messages = get_flashed_messages(with_categories=true) %} 
+  {% if messages %}
+  <div class="container mt-3">
+    {% for category, message in messages %}
+    <div
+      class="alert alert-{{ category }} alert-dismissible fade show d-flex justify-content-between"
+      role="alert"
+    >
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
-</div>
-{% endif %} {% endwith %}
+  {% endif %} 
+{% endwith %}
 
 <!-- Updated content for Admin, Teacher, and Student roles -->
 {% if role == 'Admin' %}
 <h1 class="text-center">{{ course.name }}</h1>
 <h3>Teacher: {{ teacher.email }}</h2>
+
+{% if enrollments|length > 0 %}
 <table class="table table-striped">
   <thead>
     <tr>
@@ -40,9 +46,17 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
     {% endfor %}
   </tbody>
 </table>
+{% else %}
+<div class="alert alert-info text-center" role="alert">
+  <h4 class="alert-heading">No Students Enrolled</h4>
+  <p>It looks like there are no students enrolled in this course yet. Once students are enrolled, their information will appear here.</p>
+</div>
+{% endif %}
 
 {% elif role == 'Teacher' %}
 <h1>{{ course.name }}</h1>
+
+{% if enrollments|length > 0 %}
 <table class="table table-striped">
   <thead>
     <tr>
@@ -59,9 +73,17 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
     {% endfor %}
   </tbody>
 </table>
+{% else %}
+<div class="alert alert-info text-center" role="alert">
+  <h4 class="alert-heading">No Students Enrolled</h4>
+  <p>You currently have no students enrolled in this course. Encourage students to sign up to start teaching.</p>
+</div>
+{% endif %}
 
 {% elif role == 'Student' %}
 <h2>Your Courses</h2>
+
+{% if enrollments|length > 0 %}
 <table class="table table-striped">
   <thead>
     <tr>
@@ -82,10 +104,15 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
     {% endfor %}
   </tbody>
 </table>
+{% else %}
+<div class="alert alert-info text-center" role="alert">
+  <h4 class="alert-heading">No Courses Found</h4>
+  <p>You are not enrolled in any courses yet. Once you enroll in courses, you'll see them listed here along with your grades and remarks.</p>
+</div>
 {% endif %}
-<a
-href="{{ url_for('courses')}}"
->Back</a>
+
+{% endif %}
+<a href="{{ url_for('courses')}}" class="btn btn-secondary mt-4">Back</a>
 <!-- End of updated content -->
 
 {% endblock %}

@@ -3,7 +3,7 @@
 <table class="table">
   <thead>
     <tr>
-      <th>ID</th>
+      <th>#</th>
       <th>Email</th>
       <th>Role</th>
       <th>Actions</th>
@@ -12,7 +12,7 @@
   <tbody>
     {% for user in users %}
     <tr>
-      <td>{{ user.id }}</td>
+      <td>{{ loop.index }}</td>
       <td>{{ user.email }}</td>
       <td>
         {% if user.roles|length > 0 %} {{ user.roles[0].name }} {% else %} No

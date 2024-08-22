@@ -78,8 +78,33 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
                       value="{{ enrollment.id }}"
                     />
                     <div class="mb-3">
-                      <label for="grade" class="form-label">Grade </label>
+                      <label for="grade" class="form-label">Grade</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="grade"
+                        name="grade"
+                        value="{{ enrollment.grade or '' }}"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        required
+                      />
                     </div>
+                    <div class="mb-3">
+                      <label for="remark" class="form-label">Remark</label>
+                      <textarea
+                        class="form-control"
+                        id="remark"
+                        name="remark"
+                        rows="3"
+                      >
+{{ enrollment.remark or '' }}</textarea
+                      >
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                      Submit
+                    </button>
                   </form>
                 </div>
               </div>
@@ -87,6 +112,18 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
           </div>
         </td>
       </tr>
+      {% endfor %}
     </tbody>
   </table>
+  {% else %}
+  <div class="alert alert-warning" role="alert">
+    No students are enrolled in this course yet.
+  </div>
+  {% endif %}
+
+  <a href="{{ url_for('courses') }}" class="btn btn-secondary"
+    >Back to Courses</a
+  >
 </div>
+
+{% endblock %}

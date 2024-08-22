@@ -4,6 +4,7 @@ import os
 SECRET_KEY = 'eOio8fxpALTDRf-hxHpA_cs7ekewX0MBM5c2JeGfClo'
 SECURITY_PASSWORD_SALT = '109736161404603884828353211322546822202'
 
+#vercel postgresql database
 database_url = os.environ.get('DATABASE_URL', 'postgres://default:pqa8uxi1KXJB@ep-long-truth-a4uo22y9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require')
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
