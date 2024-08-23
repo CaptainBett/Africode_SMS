@@ -89,9 +89,7 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
           >View Users</a
         >
         {% endif %} {% if current_user.has_role('Student') %}
-        <a
-          href="{{ url_for('course_details',course_id=course.id) }}"
-          class="btn btn-success"
+        <a href="{{ url_for('view_grades') }}" class="btn btn-success"
           >View My Grades</a
         >
         {% endif %} {% if current_user.has_role('Teacher') %}

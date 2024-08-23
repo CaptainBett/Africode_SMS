@@ -134,6 +134,8 @@ def index():
                            title='Dashboard')
 
 
+
+
 @app.route('/courses')
 @login_required
 def courses():
@@ -147,44 +149,72 @@ def courses():
         flash('Access denied.', 'danger')
         return redirect(url_for('index'))
     return render_template('courses.html', title='Courses | SMS', courses=courses)
-    
        
-
 @app.route('/courses/<int:course_id>')
 @login_required
 def course_details(course_id):
-    course = Course.query.get_or_404(course_id)
+    course = Course.query.get(course_id)
+
+    if course is None:
+        # Handle the case where the course doesn't exist
+        flash('The course does not exist.', 'danger')
+        return redirect(url_for('index'))
+
     enrollments = Enrollment.query.filter_by(course_id=course_id).all()
-    
+
     if current_user.has_role('Admin'):
-        # Admin can see course name, teacher, students, grades, and remarks
+        # Admin sees all course details including teacher and student enrollments
         context = {
             'role': 'Admin',
             'course': course,
-            'teacher': course.teacher,
+            'teacher': course.teacher,  # Admin gets the course teacher
             'enrollments': enrollments
         }
     elif current_user.has_role('Teacher'):
-        # Teacher can see course name, student names, and their grades
+        # Teacher sees course details and can manage student grades and remarks
         context = {
             'role': 'Teacher',
             'course': course,
             'enrollments': enrollments
         }
     elif current_user.has_role('Student'):
-        # Student can see all courses they are enrolled in, with course name, teacher, grade, and remark
-        enrollments = Enrollment.query.filter_by(student_id=current_user.id).all()
+        # Check if the student is enrolled in the course
+        student_enrollments = Enrollment.query.filter_by(student_id=current_user.id, course_id=course_id).all()
+        
+        if not student_enrollments:
+            # If no enrollments, flash a message and redirect
+            flash('You are not enrolled in this course to view grades.', 'warning')
+            return redirect(url_for('index'))
+
         context = {
             'role': 'Student',
             'course': course,
-            'enrollments': enrollments
+            'enrollments': student_enrollments  # Only show enrollments of the current student
         }
     else:
         flash('Access denied.', 'danger')
         return redirect(url_for('index'))
-
     
     return render_template('course_details.html', **context, title='Course Details | SMS')
+
+
+@app.route('/view_grades')
+@login_required
+def view_grades():
+    if current_user.has_role('Student'):
+        # Retrieve courses the student is enrolled in
+        courses = Course.query.join(Enrollment).filter(Enrollment.student_id == current_user.id).all()
+        
+        if not courses:
+            flash('There are no courses available to view grades.', 'info')
+            return redirect(url_for('index'))  # Or another appropriate page
+        
+        # If there are courses, redirect to the first course details or handle accordingly
+        return redirect(url_for('course_details', course_id=courses[0].id))
+    
+    # Handle other roles if needed
+    return redirect(url_for('index'))
+
 
 
 @app.route('/create_course',methods=['POST','GET'])
@@ -261,6 +291,8 @@ def manage_students():
     
     return render_template('manage_students.html', courses=courses, enrollments=enrollments)
 
+
+
 @app.route('/manage_courses', methods=['GET', 'POST'])
 @login_required
 @roles_required('Admin')  # Ensure only admins can access this route
@@ -286,6 +318,8 @@ def manage_courses():
     courses = Course.query.all()
     return render_template('manage_courses.html', courses=courses)
 
+
+
 @app.route('/delete_course/<int:course_id>', methods=['POST','GET'])
 @login_required
 @roles_required('Admin')
@@ -295,6 +329,8 @@ def delete_course(course_id):
     db.session.commit()
     flash(f'{course.name} deleted successfully!', 'success')
     return redirect(url_for('manage_courses'))
+
+
 
 @app.route('/register_user', methods=['POST', 'GET'])
 @roles_required('Admin')
@@ -330,11 +366,13 @@ def register_user():
     
     return render_template('register_user.html', title='Register User | SMS', form=form)
 
+
 @app.route('/view_users',methods=['GET', 'POST'])
 @roles_required('Admin')  # Only allow Admins to view users
 def view_users():
     users = User.query.all()  # Assuming you have a User model
     return render_template('view_users.html', users=users)
+
 
 
 @app.route('/edit_user/<int:user_id>', methods=['GET', 'POST'])

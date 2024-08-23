@@ -22,6 +22,7 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
 {% if role == 'Admin' %}
 <h1 class="text-center">{{ course.name }}</h1>
 <h3>Teacher: {{ teacher.email }}</h3>
+<!-- Display teacher email for Admin -->
 
 {% if enrollments|length > 0 %}
 <table class="table table-striped">
@@ -30,7 +31,7 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
       <th>Student Name</th>
       <th>Grade</th>
       <th>Remark</th>
-      <!-- Remark column added -->
+      <!-- Added column for remark -->
     </tr>
   </thead>
   <tbody>
@@ -39,7 +40,7 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
       <td>{{ enrollment.student.email }}</td>
       <td>{{ enrollment.grade }}</td>
       <td>{{ enrollment.remark }}</td>
-      <!-- Display remark -->
+      <!-- Display remarks for Admin -->
     </tr>
     {% endfor %}
   </tbody>
@@ -65,8 +66,6 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
       <th>Student Name</th>
       <th>Grade</th>
       <th>Remark</th>
-      <!-- Remark column added -->
-      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -75,38 +74,6 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
       <td>{{ enrollment.student.email }}</td>
       <td>{{ enrollment.grade }}</td>
       <td>{{ enrollment.remark }}</td>
-      <!-- Display current remark -->
-      <td>
-        <!-- Form to submit grade and remark -->
-        <form
-          action="{{ url_for('manage_students') }}"
-          method="POST"
-          class="d-inline"
-        >
-          <input
-            type="hidden"
-            name="enrollment_id"
-            value="{{ enrollment.id }}"
-          />
-          <div class="input-group">
-            <input
-              type="text"
-              name="grade"
-              class="form-control"
-              placeholder="Grade"
-              value="{{ enrollment.grade }}"
-            />
-            <input
-              type="text"
-              name="remark"
-              class="form-control"
-              placeholder="Remark"
-              value="{{ enrollment.remark }}"
-            />
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </div>
-        </form>
-      </td>
     </tr>
     {% endfor %}
   </tbody>
@@ -123,7 +90,7 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
 
 <!-- Student View -->
 {% elif role == 'Student' %}
-<h2>Your Courses</h2>
+<h2>My Courses</h2>
 
 {% if enrollments|length > 0 %}
 <table class="table table-striped">
@@ -133,17 +100,22 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
       <th>Teacher</th>
       <th>Grade</th>
       <th>Remark</th>
-      <!-- Remark column added -->
     </tr>
   </thead>
   <tbody>
     {% for enrollment in enrollments %}
     <tr>
       <td>{{ enrollment.course.name }}</td>
-      <td>{{ enrollment.course.teacher.email }}</td>
+      <!-- <td>{{ enrollment.course.teacher.email }}</td> -->
+
+      <!-- Handle cases where course or teacher might be None -->
+      <td>
+        {{ enrollment.course.teacher.email if enrollment.course and
+        enrollment.course.teacher else "N/A" }}
+      </td>
       <td>{{ enrollment.grade }}</td>
       <td>{{ enrollment.remark }}</td>
-      <!-- Display remark to student -->
+      <!-- Display remarks to Student -->
     </tr>
     {% endfor %}
   </tbody>
@@ -157,7 +129,6 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
   </p>
 </div>
 {% endif %} {% endif %}
-<a href="{{ url_for('courses')}}" class="btn btn-secondary mt-4">Back</a>
-<!-- End of updated content -->
-
+<a href="{{ url_for('courses') }}" class="btn btn-secondary mt-4">Back</a>
+<!-- Back button -->
 {% endblock %}
