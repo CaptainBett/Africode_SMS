@@ -18,7 +18,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True,}
 
 # Registration
-SECURITY_REGISTERABLE = True
+SECURITY_REGISTERABLE = False     #Change here if you want to enable registering users again
 SECURITY_CONFIRMABLE = True
 
 #Recover/reset
