@@ -97,6 +97,8 @@ def restrict_authenticated_user():
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 mail = Mail(app)
+
+
 @app.route('/')
 @login_required
 def index():

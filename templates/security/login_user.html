@@ -2,24 +2,32 @@
 render_field_with_errors, render_field, render_field_errors, render_form_errors,
 prop_next %} {% block content %} {% with messages =
 get_flashed_messages(with_categories=true) %} {% if messages %}
+
 <div
-  class="container mt-3 bg-info d-flex justify-content-center align-items-center w-40"
+  class="container bg-info d-flex justify-content-center align-items-center"
+  style="max-width: 600px"
 >
   {% for category, message in messages %}
   <div
-    class="alert alert-{{ category }} alert-dismissible fade show d-flex justify-content-between"
+    class="alert alert-{{ category }} alert-dismissible fade show d-flex justify-content-between "
     role="alert"
+    style="width: auto"
   >
     {{ message }}
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="alert"
-      aria-label="Close"
-    ></button>
   </div>
   {% endfor %}
 </div>
+<!-- JavaScript to auto-dismiss alerts after 5 seconds -->
+<script>
+  setTimeout(function () {
+    var alertElements = document.querySelectorAll(".alert");
+    alertElements.forEach(function (element) {
+      var alertInstance = new bootstrap.Alert(element);
+      alertInstance.close();
+    });
+  }, 5000);
+</script>
+
 {% endif %} {% endwith %}
 <!-- {% include "security/_messages.html" %} -->
 <div class="d-flex justify-content-center align-items-center min-vh-100">

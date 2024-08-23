@@ -28,6 +28,6 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
   render_field_with_errors(send_confirmation_form.email,class='form-control') }}
   {{ render_field(send_confirmation_form.submit, class='btn btn-primary') }}
 </form>
-<a href="{{ url_for('security/login')}}" class="btn btn-secondary mt-4">Back</a>
+<a href="{{ url_for('security.login')}}" class="btn btn-secondary mt-4">Back</a>
 
 {% endblock content %}
