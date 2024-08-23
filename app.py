@@ -221,7 +221,7 @@ def enroll(course_id):
         enrollment = Enrollment(course_id=course_id, student_id=current_user.id)
         db.session.add(enrollment)
         db.session.commit()
-        flash('Enrollment successful', 'success')
+        flash(f'Enrollment to {course.name} successful', 'success')
         
     return redirect(url_for('course_details', course_id=course.id))
 
@@ -276,9 +276,9 @@ def manage_courses():
             if course:
                 course.name = course_name
                 db.session.commit()
-                flash('Course updated successfully!', 'success')
+                flash(f'{course.name} updated successfully!', 'success')
             else:
-                flash('Course not found!', 'danger')
+                flash(f'Course: {course.name} not found!', 'danger')
      
         return redirect(url_for('manage_courses'))
 
@@ -286,14 +286,14 @@ def manage_courses():
     courses = Course.query.all()
     return render_template('manage_courses.html', courses=courses)
 
-@app.route('/delete_course/<int:course_id>', methods=['POST'])
+@app.route('/delete_course/<int:course_id>', methods=['POST','GET'])
 @login_required
 @roles_required('Admin')
 def delete_course(course_id):
     course = Course.query.get_or_404(course_id)
     db.session.delete(course)
     db.session.commit()
-    flash('Course deleted successfully!', 'success')
+    flash(f'{course.name} deleted successfully!', 'success')
     return redirect(url_for('manage_courses'))
 
 @app.route('/register_user', methods=['POST', 'GET'])
@@ -325,12 +325,12 @@ def register_user():
         user_datastore.add_role_to_user(user, role)
         
         db.session.commit()
-        flash('User registered successfully', 'success')
+        flash(f'{user.email} registered successfully', 'success')
         return redirect(url_for('index'))
     
     return render_template('register_user.html', title='Register User | SMS', form=form)
 
-@app.route('/view_users')
+@app.route('/view_users',methods=['GET', 'POST'])
 @roles_required('Admin')  # Only allow Admins to view users
 def view_users():
     users = User.query.all()  # Assuming you have a User model
@@ -351,19 +351,19 @@ def edit_user(user_id):
         user.email = email
         user.roles = [Role.query.filter_by(name=role).first() for role in roles]
         db.session.commit()
-        flash('User updated successfully!', 'success')
+        flash(f'{user.email} updated successfully!', 'success')
         return redirect(url_for('view_users'))
     
     return render_template('edit_user.html', user=user, all_roles=all_roles, user_roles=user_roles)
 
 
-@app.route('/delete_user/<int:user_id>', methods=['POST'])
+@app.route('/delete_user/<int:user_id>', methods=['POST','GET'])
 @roles_required('Admin')  # If you are using roles
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()
-    flash('User has been deleted.', 'success')
+    flash(f'{user.email} has been deleted successfully.', 'success')
     return redirect(url_for('view_users'))
 
 if __name__ == '__main__':
