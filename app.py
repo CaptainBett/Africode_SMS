@@ -388,10 +388,7 @@ if __name__ == '__main__':
             db.session.commit()
 
           #Create student
-        if not user_datastore.find_user(email='aaronrop40@gmail.com'):
-            hashed_password = hash_password('captain77')
-            user_datastore.create_user(email='aaronrop40@gmail.com',password=hashed_password,roles=[user_datastore.find_role('Student')])
-            db.session.commit()
+     
         if not user_datastore.find_user(email='chelangatgladwel9@gmail.com'):
             hashed_password = hash_password('captain77')
             user_datastore.create_user(email='chelangatgladwel9@gmail.com',password=hashed_password,roles=[user_datastore.find_role('Student')])
