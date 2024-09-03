@@ -1,3 +1,5 @@
 env
 __pycache__
 migrations
+managed_context
+test_suite_analysis

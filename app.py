@@ -1,5 +1,5 @@
 from flask import Flask, render_template,flash,url_for,redirect,request
-from flask_bootstrap import Bootstrap5
+from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, UserMixin, RoleMixin, login_required, SQLAlchemyUserDatastore, hash_password, current_user,roles_required
 from flask_mailman import Mail
@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 app.config.from_object(config)
 db = SQLAlchemy(app)
-Bootstrap5(app)
+Bootstrap(app)
 migrate = Migrate(app, db)
 
 roles_users = db.Table('roles_users',
@@ -255,42 +255,53 @@ def enroll(course_id):
         
     return redirect(url_for('course_details', course_id=course.id))
 
-
 @app.route('/manage_students', methods=['GET', 'POST'])
 @roles_required('Teacher')
 def manage_students():
-    # Get all courses that the current teacher is teaching
-    courses = Course.query.filter_by(teacher_id=current_user.id).all()
+    try:
+        # Get all courses that the current teacher is teaching
+        courses = Course.query.filter_by(teacher_id=current_user.id).all()
 
-    # Get all enrollments for those courses
-    enrollments = Enrollment.query.join(Course).filter(Course.teacher_id == current_user.id).all()
-    
-    # Handle form submission
+        # Get all enrollments for those courses
+        enrollments = Enrollment.query.join(Course).filter(Course.teacher_id == current_user.id).all()
+    except Exception as e:
+        flash('Error fetching courses or enrollments. Please try again later.', 'danger')
+        return render_template('manage_students.html', courses=[], enrollments=[])
+
     if request.method == 'POST':
         enrollment_id = request.form.get('enrollment_id')
         grade = request.form.get('grade')
         remark = request.form.get('remark')
-        
-        enrollment = Enrollment.query.get_or_404(enrollment_id)
-        
-        # Ensure the teacher is only grading their own students
-        if enrollment.course.teacher_id == current_user.id:
-            try:
-                grade_value = float(grade)
-                if 0 <= grade_value <= 100:  # Example range check
-                    enrollment.grade = grade_value
-                    enrollment.remark = remark
-                    db.session.commit()
-                    flash('Grade and remark submitted successfully', 'success')
-                else:
-                    flash('Grade must be between 0 and 100', 'warning')
-            except ValueError:
-                flash('Invalid grade value', 'danger')
-        else:
-            flash('Invalid enrollment', 'danger')
-    
-    return render_template('manage_students.html', courses=courses, enrollments=enrollments)
 
+        if not enrollment_id or not grade:
+            flash('Enrollment ID and grade are required.', 'warning')
+        else:
+            try:
+                enrollment = Enrollment.query.get_or_404(enrollment_id)
+            except Exception as e:
+                flash('Enrollment not found.', 'danger')
+                return redirect(url_for('manage_students'))
+            
+            # Ensure the teacher is only grading their own students
+            if enrollment.course.teacher_id != current_user.id:
+                flash('You are not authorized to grade this enrollment.', 'danger')
+            else:
+                try:
+                    grade_value = float(grade)
+                    if 0 <= grade_value <= 100:  # Example range check
+                        enrollment.grade = grade_value
+                        enrollment.remark = remark
+                        db.session.commit()
+                        flash('Grade and remark submitted successfully', 'success')
+                    else:
+                        flash('Grade must be between 0 and 100.', 'warning')
+                except ValueError:
+                    flash('Invalid grade value. Please enter a number between 0 and 100.', 'danger')
+                except Exception as e:
+                    db.session.rollback()
+                    flash('An error occurred while updating the grade. Please try again.', 'danger')
+
+    return render_template('manage_students.html', courses=courses, enrollments=enrollments)
 
 
 @app.route('/manage_courses', methods=['GET', 'POST'])

@@ -2,26 +2,22 @@
 
 ## Overview
 
-Welcome to the School Management System! This is a comprehensive web-based application developed using Flask and FastAPI. The system is designed to manage various aspects of a school, including student admissions, course management, attendance, performance tracking, finance, and more.
+Welcome to the School Management System! This is a comprehensive web-based application developed using Flask. The system is designed to manage various aspects of a school, including student admissions, course management, performance tracking and more.
 
 ## Features
 
-- **Student Management**: Handle student admissions, profiles, course enrollments, and attendance tracking.
-- **Course Management**: Manage courses, modules, and teachers. Students can view their enrolled courses and grades.
+- **Student Management**: Handle student profiles and course enrollments.
+- **Course Management**: Manage courses, and teachers. Students can view their enrolled courses and grades.
 - **Performance Tracking**: Teachers can grade students, and students can view their grades and remarks.
-- **Finance Management**: Manage school fees and other financial aspects.
-- **Store Management**: Keep track of school store inventory and transactions.
 - **User Roles**: Different roles for Admins, Teachers, and Students, with role-based access control.
 - **Responsive UI**: Advanced Bootstrap styling ensures the application is fully responsive and user-friendly.
-- **RESTful API**: Full CRUD functionality and a RESTful API for integration with other systems.
 
 ## Technology Stack
 
-- **Backend**: Flask, Flask-SQLAlchemy ORM, FastAPI
+- **Backend**: Flask, Flask-SQLAlchemy ORM
 - **Database**: PostgreSQL
 - **Frontend**: HTML, CSS, Bootstrap
 - **Security**: Flask-Security, role-based access control
-- **API**: RESTful API with FastAPI
 
 ## Installation
 
@@ -58,7 +54,7 @@ flask run
 Usage
 Admin: Admins can manage courses, students, teachers, and the overall system.
 Teacher: Teachers can manage their courses and grade students.
-Student: Students can view their enrolled courses, grades, and attendance records.
+Student: Students can view their enrolled courses, grades.
 Africode Academy
 Africode Academy offers a wide range of coding courses designed to equip students with practical skills in web development, backend development, data science, and more. Africode Academy provides a strong foundation in coding principles and real-world projects to help students succeed in their tech careers.
 

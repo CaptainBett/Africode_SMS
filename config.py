@@ -5,14 +5,14 @@ SECRET_KEY = 'eOio8fxpALTDRf-hxHpA_cs7ekewX0MBM5c2JeGfClo'
 SECURITY_PASSWORD_SALT = '109736161404603884828353211322546822202'
 
 #vercel postgresql database
-database_url = os.environ.get('DATABASE_URL', 'postgres://default:pqa8uxi1KXJB@ep-long-truth-a4uo22y9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require')
-if database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
+# database_url = os.environ.get('DATABASE_URL', 'postgres://default:pqa8uxi1KXJB@ep-long-truth-a4uo22y9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require')
+# if database_url.startswith("postgres://"):
+#     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
-SQLALCHEMY_DATABASE_URI = database_url
+# SQLALCHEMY_DATABASE_URI = database_url
 
 # Database Configuration
-# SQLALCHEMY_DATABASE_URI = 'postgresql://captain:captain@localhost:5432/sms'
+SQLALCHEMY_DATABASE_URI = 'postgresql://captain:captain@localhost:5432/sms'
 # SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:XRMSOWRIBmembwCWXcrzCeWvgsfpOSJK@postgres.railway.internal:5432/railway'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True,}
